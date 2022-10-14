@@ -1,10 +1,10 @@
 import type { NextPage } from "next";
-import { FormEvent, useState } from "react";
+import { FormEvent, useCallback, useState } from "react";
 import { SearchResults } from "../components/SearchResults";
 
 const Home: NextPage = () => {
-  const [search, setSearch] = useState('');
-  const [results, setResults] = useState([])
+  const [search, setSearch] = useState("");
+  const [results, setResults] = useState([]);
 
   async function handleSearch(event: FormEvent) {
     event.preventDefault();
@@ -13,11 +13,15 @@ const Home: NextPage = () => {
       return;
     }
 
-    const response = await fetch(`http://localhost:3333/products?q=${search}`)
-    const { data } = await response.json()
+    const response = await fetch(`http://localhost:3333/products?q=${search}`);
+    const data = await response.json();
 
     setResults(data);
   }
+
+  const addToWishList = useCallback((id: number) => {
+    console.log(id)
+  }, [])
 
   return (
     <div>
@@ -27,12 +31,15 @@ const Home: NextPage = () => {
         <input
           type="text"
           value={search}
-          onChange={e => setSearch(e.target.value)}
+          onChange={(e) => setSearch(e.target.value)}
         />
         <button type="submit">Buscar</button>
       </form>
 
-      <SearchResults results={results}/>
+      <SearchResults 
+      results={results} 
+      onAddToWishList={addToWishList}
+      />
     </div>
   );
 };
